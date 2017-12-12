@@ -12,21 +12,6 @@ if(!empty($_GET["action"])) {
         }
 }
 
-// if(isset($_POST["checkout"])) {
-// 	$to = "ancarusu2000@gmail.com";
-// 	$from = $_POST["contactDetails"];
-// 	$name = $_POST["name"];
-// 	$subject = "Form submision";
-// 	$message = $name . "wrote: " . $_POST["comments"];
-// 	$headers = "From: " . $from;
-// 	mail($to, $subject, $message, $headers);
-// 	ini_set("SMTP","ssl://smtp.gmail.com");
-// 	ini_set("smtp_port","465");
-// }
-
-// ini_set("SMTP","ssl://smtp.gmail.com");
-// ini_set("smtp_port","465");
-
 ?>
 
 <!DOCTYPE html>
