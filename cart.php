@@ -2,6 +2,9 @@
 
 require_once("common.php");
 
+$sql = "SELECT * from productsnew";
+$result = $conn->query($sql);
+
 if(!empty($_GET["action"])) {  
         if($_GET["action"] == "remove") {
             foreach ($_SESSION["cart"] as $keys => $values) {
@@ -12,6 +15,24 @@ if(!empty($_GET["action"])) {
         }
 }
 
+// $x = array_column($_SESSION["cart"], "id");
+// print_r($x);
+
+// if(isset($_POST["checkout"])) {
+// 	$to = "ancarusu2000@gmail.com";
+// 	$from = $_POST["contactDetails"];
+// 	$name = $_POST["name"];
+// 	$subject = "Form submision";
+// 	$message = $name . "wrote: " . $_POST["comments"];
+// 	$headers = "From: " . $from;
+// 	mail($to, $subject, $message, $headers);
+// 	ini_set("SMTP","ssl://smtp.gmail.com");
+// 	ini_set("smtp_port","465");
+// }
+
+// ini_set("SMTP","ssl://smtp.gmail.com");
+// ini_set("smtp_port","465");
+
 ?>
 
 <!DOCTYPE html>
@@ -21,20 +42,26 @@ if(!empty($_GET["action"])) {
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<?php if(!empty($_SESSION["cart"])):?>
-		<?php foreach ($_SESSION["cart"] as $keys => $values):?>
+	<?php if(!empty($_SESSION["cart"])): ?>
+		<?php if($result->num_rows > 0): ?>
+	    <?php while($row = $result->fetch_assoc()): ?>
+		<?php foreach (array_column($_SESSION["cart"], "id") as $keys => $values):?> 
+			<?php if($values == $row["Id"]): ?>
 		<div class="product"> 
 		    	<div class="image">
-                    <img src="<?= $values["url"]?>">
+                    <img src="<?= $row["Image"]?>">
                 </div>
                 <div class="productdetails">
-                    <div class="productTitle"><?= $values["title"]?></div>
-                    <div class="productDescription"><?=$values["description"]?></div>
-                    <div class="productPrice"><?=$values["price"]?></div>
-                   <a href="cart.php?action=remove&amp;id=<?= $values["id"] ?>" class="remove"><?=translate("Remove")?></a>
+                    <div class="productTitle"><?= $row["Title"]?></div>
+                    <div class="productDescription"><?=$row["Description"]?></div>
+                    <div class="productPrice"><?=$row["Price"]?></div>
+                   <a href="cart.php?action=remove&amp;id=<?= $row["Id"] ?>" class="remove"><?=translate("Remove")?></a>
                 </div>
         </div>
-        <?php endforeach;?>
+        <?php endif; ?>
+		<?php endforeach;?> 
+    <?php endwhile; ?>
+    <?php endif; ?>
 	<?php endif; ?>
 
 <div class="linkToIndex">
