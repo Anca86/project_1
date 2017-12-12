@@ -1,0 +1,21 @@
+.product {
+  width: 350px;
+  height: 170px;
+}
+
+.image {float: left;}
+
+img {
+  width: 130px;
+  height: 130px;
+}
+
+.productdetails {
+  width: 150px;
+  float: left;
+  margin-left: 10px;
+  margin-top: 20px;
+}
+
+
+.linkToCart {margin-left: 100px;}

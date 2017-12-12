@@ -13,7 +13,10 @@ if ($conn->connect_error) {
     die("Conection error: " . $conn->connect_error);
 }
 
-
-if(isset($_SESSION["lastname"])){
-    unset($_SESSION["lastname"]);
+function translate($string) {
+	return $string;
 }
+
+
+
+

@@ -1,66 +1,38 @@
 <?php
 require_once('common.php');
 
-$stmt = $conn->prepare("INSERT INTO products(Title, Description, Price) VALUES (?, ?, ?)");
-$stmt->bind_param("ssi", $title, $description, $price);
-
-// $title = "Tablet";
-// $description = "Description for tablet";
-// $price = "98";
-// $stmt->execute();
-// $stmt->close();
-
-$sql = "SELECT * from products RIGHT JOIN images on Id=productId ORDER BY Id";
+$sql = "SELECT * from productsnew";
 $result = $conn->query($sql);
-if($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $row["url"] = 
-        "http://". $_SERVER['HTTP_HOST'].'/project1/images/'.$row['imageId'].".jpg";
-        echo 
-            '<div class="product">
-                <div class="image">
-                    <img src="' . $row["url"]. '">
-                </div>' .
-                '<div class="productdetails">
-                    <div class="productTitle">' . $row["Title"] . '</div>
-                    <div class="productDescription">' . $row["Description"] . '</div>
-                    <div class="productPrice">' . $row["Price"] . '</div>
-                    <a href="?list_me" method="GET" class="addTocart" name="'.$row["Id"].'">Add</a>
-                </div>
-            </div>';  
 
-            if(isset($_GET["list_me"])) {
-                $_SESSION["cart"] = array(
-                    'productId' => $row["productId"],
-                    'img'=> $row['url'],
-                    'title' => $row['Title'],
-                    'description' => $row['Description'],
-                    'price' => $row['Price'],
-                    );
-                // case 'list_me':
-                //     foreach ($_SESSION["cart"] as $key => $value) {
-                //         if()
-                //     }
-                //     break;
-        // switch code here
-        case "list_me":
-            if(!empty($_SESSION["cart"])) {
-            foreach($_SESSION["cart"] as $k => $v) {
-                if($_GET["name"] == $k) unset($_SESSION["cart"][$k]);              
-                if(empty($_SESSION["cart"])) unset($_SESSION["cart"]);
-            }
-        }
-        break;
-case "empty":
-    unset($_SESSION["cart"]);
-break;
+if(isset($_POST["add_to_cart"])) {
+    if(isset($_SESSION["cart"])) {
+        $item_array_id = array_column($_SESSION["cart"], "id");
 
+        if(!in_array($_GET["id"], $item_array_id)) {
+
+            $count = count($_SESSION["cart"]);
+            $item_array = array(
+                    "id" => $_GET["id"], 
+                    "url" => $_POST["hidden_url"],
+                    "title" => $_POST["hidden_title"],
+                    "description" => $_POST["hidden_description"],
+                    "price" => $_POST["hidden_price"]
+                );
+            $_SESSION["cart"][$count] = $item_array;
+        } else {
+            echo "I am already added";
         }
 
-                          
-    }
-} else {
-    return false;
+    } else {
+        $item_array = array(
+                "id" => $_GET["id"],
+                "url" => $_POST["hidden_url"],
+                "title" => $_POST["hidden_title"],
+                "description" => $_POST["hidden_description"],
+                "price" => $_POST["hidden_price"]
+            );
+        $_SESSION["cart"][0] = $item_array;
+    } 
 }
 
 $conn->close();
@@ -70,37 +42,36 @@ $conn->close();
 <html>
 <head>
     <title>Products</title>
-    <style type="text/css">
-        .addTocart {
-            float: right;
-            margin-top: -40px;
-            margin-right: -20px;
-        }
-        .product {
-            width: 350px;
-            height: 170px;
-        }
-        .image {float: left;}
-
-        img {
-            width: 130px;
-            height: 130px;
-        }
-
-        .productDetails {
-           width: 170px;
-           float: left;
-           margin-left: 10px;
-           margin-top: 30px;
-           padding: 5px;
-        }
-
-
-        .linkToCart {margin-left: 100px;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-<div class="linkToCart"><a href="cart.php">Go to cart</a></div>
+
+<?php if($result->num_rows > 0): ?>
+    <?php while($row = $result->fetch_assoc()):?>
+            <div class="product">
+            <form method="post" action="index.php?action=add&amp;id=<?=$row['Id'] ?>">
+                <div class="image">
+                    <img src="<?= $row["Image"];?>">
+                </div>
+                <div class="productdetails">
+                    <div class="productTitle"><?= $row["Title"]?></div>
+                    <div class="productDescription"><?=$row["Description"]?></div>
+                    <div class="productPrice"><?=$row["Price"]?></div>
+                    <input type="hidden" name="hidden_url" value="<?= $row["url"]?>">
+                    <input type="hidden" name="hidden_title" value="<?= $row["Title"]?>">
+                    <input type="hidden" name="hidden_description" value="<?=$row["Description"]?>">
+                    <input type="hidden" name="hidden_price" value="<?=$row["Price"]?>">
+                    <input type="submit" name="add_to_cart" value="Add">
+                </div>
+            </form>
+            </div>               
+    <?php endwhile; ?>
+<?php endif;?>
+
+<div class="linkToCart">
+    <a href="cart.php"><?=translate("Go to cart")?></a>
+</div>
+
 </body>
 </html>

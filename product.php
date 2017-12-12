@@ -1,31 +1,25 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "ancar";
-$dbname = "project1";
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Conection error: " . $conn->connect_error);
-}
+require_once("common.php");
 
-$target_dir = "images/";
-$target_file = $target_dir . basename($_FILES["file"]["name"]);
+$target_dir = "uploads/";
+$target_file = $target_dir . idate("U") . basename($_FILES["file"]["name"]);
 $uploadOk = 1;
 $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
-// move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
 
-	// $stmt = mysqli_stmt_init($conn);
-$stmt = $conn->prepare("INSERT INTO images(productId) VALUES (?)");
-$stmt->bind_param("i", $productId);
+$stmt = $conn->prepare("INSERT INTO productsnew (Title, Description, Price, Image) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssis", $title, $description, $price, $image);
 
-$productId = $_POST['productId'];
+$title = $_POST["Title"];
+$description = $_POST["Description"];
+$price = $_POST["Price"];
+$image = $target_file;
+
 
 if($stmt->execute()) {
 	$fileId = mysqli_stmt_insert_id($stmt);
-	copy($_FILES['file']['tmp_name'], __DIR__ . "/images/".$fileId.".jpg");
+	copy($_FILES['file']['tmp_name'], __DIR__ . "/".$image);
 }
 
-// $stmt->execute();
 $stmt->close();
 
 ?>
@@ -36,11 +30,15 @@ $stmt->close();
 </head>
 <body>
 
-<form method="post" enctype="multipart/form-data">
+
+<form method="post" enctype="multipart/form-data" action="product.php">
+	<input type="text" name="Title"><br />
+	<input type="text" name="Description"><br />
+	<input type="text" name="Price"><br />
 	<input type="file" name="file" id="file"> <br>
-	<input type="text" name="productId" id="productId">
-	<input type="submit" name="submit" value="Upload">
+	<input type="submit" name="submit" value="Save">
 </form>
+
 
 </body>
 </html>
