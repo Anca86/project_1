@@ -8,8 +8,9 @@ $result = $conn->query($sql);
 if(!empty($_GET["action"])) {  
         if($_GET["action"] == "remove") {
             foreach ($_SESSION["cart"] as $keys => $values) {
-                if ($values["id"] == $_GET["id"]) {
+                if ($values["Id"] == $_GET["id"]) {
                     unset($_SESSION["cart"][$keys]);
+                    $_SESSION["cart"] = array_merge($_SESSION["cart"]);
                 }
             }
         }
@@ -45,7 +46,7 @@ if(!empty($_GET["action"])) {
 	<?php if(!empty($_SESSION["cart"])): ?>
 		<?php if($result->num_rows > 0): ?>
 	    <?php while($row = $result->fetch_assoc()): ?>
-		<?php foreach (array_column($_SESSION["cart"], "id") as $keys => $values):?> 
+		<?php foreach (array_column($_SESSION["cart"], "Id") as $keys => $values):?> 
 			<?php if($values == $row["Id"]): ?>
 		<div class="product"> 
 		    	<div class="image">
