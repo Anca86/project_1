@@ -1,28 +1,15 @@
 <?php
 require_once('common.php');
 
-// $sql = "SELECT * from productsnew";
-// $result = $conn->query($sql);
-
-
 $stmt = mysqli_stmt_init($conn);
-// $x = array();
-//     foreach ($_SESSION["cart"] as $key => $value) {
-//         $x[] = $value["Id"];
-// }
-
 $i = str_repeat('i', count($_SESSION["cart"]));
 mysqli_stmt_prepare($stmt, "SELECT * FROM productsnew WHERE Id NOT IN (" .
 str_repeat('?,', count($_SESSION["cart"]) - 1) . '?' . ")"); 
 
-$a = 13;
-$b = 12;
-mysqli_stmt_bind_param($stmt, $i, $a, $b);
+mysqli_stmt_bind_param($stmt, $i, );
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
-
-////d
 if(isset($_POST["add_to_cart"])) {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
@@ -34,12 +21,8 @@ if(isset($_POST["add_to_cart"])) {
                 );
     } 
 }
-
-print_r($_SESSION["cart"]);
-
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,6 +52,5 @@ $conn->close();
 <div class="linkToCart">
     <a href="cart.php"><?= translate("Go to cart") ?></a>
 </div>
-
 </body>
 </html>
