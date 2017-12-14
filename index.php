@@ -1,15 +1,57 @@
 <?php
 require_once('common.php');
 
-$stmt = mysqli_stmt_init($conn);
-$i = str_repeat('i', count($_SESSION["cart"]));
-mysqli_stmt_prepare($stmt, "SELECT * FROM productsnew WHERE Id NOT IN (" .
-str_repeat('?,', count($_SESSION["cart"]) - 1) . '?' . ")"); 
+// option 1 
 
-mysqli_stmt_bind_param($stmt, $i, );
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+// $stmt = mysqli_stmt_init($conn);
+// $i = str_repeat('i', count($_SESSION["cart"]));
+// mysqli_stmt_prepare($stmt, "SELECT * FROM productsnew WHERE Id NOT IN (" .
+// str_repeat('?,', count($_SESSION["cart"]) - 1) . '?' . ")"); 
 
+// mysqli_stmt_bind_param($stmt, $i, );
+// mysqli_stmt_execute($stmt);
+// $result = mysqli_stmt_get_result($stmt);
+
+//option 2 - that works
+// $sql = "SELECT * FROM productsnew";
+if(isset($_SESSION["cart"])) {
+    $x = array();
+    foreach ($_SESSION["cart"] as $key => $value) {
+        $x[] = $value["Id"];
+    }
+    $myvar = implode(", ", $x);
+    if(count($_SESSION["cart"]) == 0) {
+        $myvar = count($_SESSION["cart"]);
+    }
+    $sql = "SELECT * FROM productsnew WHERE Id NOT IN ($myvar)";
+} 
+
+$result = $conn->query($sql);
+
+//////option 3
+// $stmt = mysqli_stmt_init($conn);
+// function myFunc() {
+//     global $stmt;
+//     foreach ($_SESSION["cart"] as $key => $value) { 
+//         $n = "i";;
+//         mysqli_stmt_prepare($stmt, "SELECT * FROM productsnew WHERE Id NOT IN (?)");
+//         mysqli_stmt_bind_param($stmt, $n, $value["Id"]);
+//     }
+// }
+
+// $x = array();
+// foreach ($_SESSION["cart"] as $key => $value) {
+//     $x[] = $value["Id"];
+// }
+// call_user_func_array("myFunc", $x);
+// mysqli_stmt_execute($stmt);
+// $result = mysqli_stmt_get_result($stmt);
+
+
+
+
+
+///////code for session
 if(isset($_POST["add_to_cart"])) {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
@@ -21,6 +63,7 @@ if(isset($_POST["add_to_cart"])) {
                 );
     } 
 }
+
 $conn->close();
 ?>
 <!DOCTYPE html>

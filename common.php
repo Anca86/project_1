@@ -17,6 +17,8 @@ function translate($string) {
 	return $string;
 }
 
+$sql = "SELECT * FROM productsnew";
+
 
 
 
