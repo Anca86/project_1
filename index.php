@@ -1,6 +1,5 @@
 <?php
 require_once('common.php');
-
 if(isset($_SESSION["cart"])) {
     $x = array();
     foreach ($_SESSION["cart"] as $key => $value) {
@@ -13,7 +12,6 @@ if(isset($_SESSION["cart"])) {
     $sql = "SELECT * FROM productsnew WHERE Id NOT IN ($myvar)";
 } 
 $result = $conn->query($sql);
-
 if(isset($_POST["add_to_cart"])) {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
@@ -52,7 +50,6 @@ $conn->close();
         </div>               
     <?php endwhile; ?>
 <?php endif; ?>
-
 <div class="linkToCart">
     <a href="cart.php"><?= translate("Go to cart") ?></a>
 </div>

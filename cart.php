@@ -1,7 +1,6 @@
 <?php
 require_once("common.php");
 $result = $conn->query($sql);
-
 if(!empty($_GET["action"]) && $_GET["action"] == "remove") {  
     foreach ($_SESSION["cart"] as $keys => $values) {
         if ($values["Id"] == $_GET["id"]) {
@@ -10,7 +9,6 @@ if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
         }
     }
 }
-
 $cartProducts = array();
 if(!empty($_SESSION["cart"]) && $result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
@@ -27,7 +25,6 @@ if(!empty($_SESSION["cart"]) && $result->num_rows > 0) {
         }
     }
 }
-
 $order = "";
 $totalsum = 0;
 $i = 0;
@@ -36,7 +33,6 @@ while ($i < count($cartProducts)) {
     $totalsum += $cartProducts[$i]["price"];
     $i++;
 }
-
 $nameErr = $contactDetailsErr = "";
 if(isset($_POST["checkout"])) {
 	$to = "ancarusu2000@gmail.com";
@@ -58,7 +54,6 @@ if(isset($_POST["checkout"])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,7 +78,6 @@ if(isset($_POST["checkout"])) {
         <?php endif; ?>
     <?php $i++; endwhile; ?>
 <?php endforeach;?> 
-
 <div class="linkToIndex">
     <a href="index.php"><?= translate("Go to index") ?></a>
 </div>
