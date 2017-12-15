@@ -1,15 +1,15 @@
 <?php
 require_once('common.php');
 if(isset($_SESSION["cart"])) {
-    $x = array();
+    $ids = array();
     foreach ($_SESSION["cart"] as $key => $value) {
-        $x[] = $value["Id"];
+        $ids[] = $value["Id"];
     }
-    $myvar = implode(", ", $x);
+    $stringIds = implode(", ", $x);
     if(count($_SESSION["cart"]) == 0) {
         $myvar = count($_SESSION["cart"]);
     }
-    $sql = "SELECT * FROM productsnew WHERE Id NOT IN ($myvar)";
+    $sql = "SELECT * FROM productsnew WHERE Id NOT IN ($stringIds)";
 } 
 $result = $conn->query($sql);
 if(isset($_POST["add_to_cart"])) {
