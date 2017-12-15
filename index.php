@@ -5,7 +5,7 @@ if(isset($_SESSION["cart"])) {
     foreach ($_SESSION["cart"] as $key => $value) {
         $ids[] = $value["Id"];
     }
-    $stringIds = implode(", ", $x);
+    $stringIds = implode(", ", $ids);
     if(count($_SESSION["cart"]) == 0) {
         $myvar = count($_SESSION["cart"]);
     }
