@@ -44,7 +44,7 @@ if(isset($_POST["checkout"])) {
     if (!filter_var($contactDetails, FILTER_VALIDATE_EMAIL)) {
         $contactDetailsErr = "Email is not valid";
     }
-    $comments = test_user_input( $_POST["comments"]);
+    $comments = test_user_input($_POST["comments"]);
 	$subject = "Form submision";
 	$headers = "From: " . $contactDetails;
     $message = $name . " wrote: " . $comments . "\r\n". "Order: " . "\r\n" . $order ."\r\n" . 

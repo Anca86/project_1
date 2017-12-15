@@ -1,6 +1,13 @@
 <?php
 require_once("common.php");
 
+//// define(ADMIN,$_SESSION['admin']);
+// if(!$_SESSION["admin"]){ 
+// 	header("login.php"); 
+// } else {
+// 	header( 'Content-Type: text/html; charset=utf-8' );
+// }
+
 $target_dir = "uploads/";
 $target_file = $target_dir . idate("U") . basename($_FILES["file"]["name"]);
 $uploadOk = 1;
