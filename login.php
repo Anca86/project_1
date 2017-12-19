@@ -23,7 +23,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	if (isset($inputUser, $inputPass)) {
 			if ($inputUser == $adminUsername && $inputPass == $adminPassword) {
 			    $_SESSION["admin"] = $inputUser; 
-			    header("location:product.php");
+			    header("location:products.php");
 			} else {
 				$msg = "Wrong Username or Password. Please retry";
 			}
@@ -36,7 +36,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 	<title></title>
 </head>
 <body>
-<form action="login.php" method="post">
+<form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 	<input type="Username" name="username" placeholder="Username" autocomplete="off">
 	<span><?= $msg ?></span><br />
 	<input type="Password" name="password" placeholder="Password" autocomplete="off"><br />
