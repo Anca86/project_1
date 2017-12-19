@@ -1,5 +1,6 @@
 <?php
 require_once("common.php");
+print_r($_SESSION["cart"]);
 
 $stringIds = implode(", ", $_SESSION["cart"]);
 if(count($_SESSION["cart"]) == 0) {
