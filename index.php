@@ -3,7 +3,6 @@ require_once('common.php');
 $sql = "SELECT * FROM productsnew";
 $result = $conn->query($sql);
 
-
 if(isset($_SESSION["cart"])) {
     $stringIds = implode(", ", $_SESSION["cart"]);
     $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id NOT IN ($stringIds)");
@@ -20,8 +19,6 @@ if(isset($_POST["add_to_cart"])) {
         array_push($_SESSION["cart"], $_POST["hidden_id"]);
     }
 }
-
-
 $conn->close();
 ?>
 <!DOCTYPE html>

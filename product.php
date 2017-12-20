@@ -37,7 +37,6 @@ if(isset($_POST["edit"])) {
 	$stmt->close();
 }
 if(isset($_POST["Update"])) {
-	global $conn;
 	$target_dir = "uploads/";
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
 	$uploadOk = 1;
@@ -61,7 +60,6 @@ if(isset($_POST["Update"])) {
 	}
 	$sql->close();
 	$succes = translate("Product was updated!");
-
 }
 
 ?>
@@ -71,8 +69,6 @@ if(isset($_POST["Update"])) {
 	<title><?= translate("Product") ?></title>
 </head>
 <body>
-
-
 <form method="post" enctype="multipart/form-data" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 	<span><?= $succes ?></span><br />
 	<input type="text" name="Title" required="required" placeholder="Title"
@@ -87,7 +83,5 @@ if(isset($_POST["Update"])) {
 	<a href="products.php">Products</a>
 	<input type="submit" name="<?= $buttonValue ?>" value="<?= $buttonValue?>">
 </form>
-
-
 </body>
 </html>

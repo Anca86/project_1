@@ -7,7 +7,6 @@ if(isset($_SESSION["cart"])) {
     $stmt->bind_param("s", $_SESSION["cart"]);
     $stmt->execute();
     $result = mysqli_stmt_get_result($stmt);
-
     if(!empty($_GET["action"]) && $_GET["action"] == "remove") {  
         foreach ($_SESSION["cart"] as $key => $value) {
             if ($value === $_GET["id"]) {
@@ -15,7 +14,6 @@ if(isset($_SESSION["cart"])) {
             }
         }
     }
-
     if(count($_SESSION["cart"])== 0) {
         session_unset();
     }
@@ -58,18 +56,15 @@ if(isset($_POST["checkout"])) {
     }
     $comments = test_user_input($_POST["comments"]);
 	$subject = translate("Form submision");
-
 	$headers = translate("From: ") . $contactDetails . "\r\n";
     $headers .= "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-
     $message = "<html><body>";
     $message .= "<table border='1'";
     $message .= $order;
     $message .= "<tr><td colspan='2'>" . translate('Total') . "</td><td colspan='2'>" . $totalsum. "</td></tr>";
     $message .= "</table>";
     $message .= "</html></body>";
-
     if(preg_match("/^[a-zA-Z ]*$/",$name) && (filter_var($contactDetails, FILTER_VALIDATE_EMAIL))) {
 	   mail($to, $subject, $message, $headers);
     }
