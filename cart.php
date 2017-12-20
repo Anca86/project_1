@@ -1,21 +1,23 @@
 <?php
 require_once("common.php");
-print_r($_SESSION["cart"]);
 
-$stringIds = implode(", ", $_SESSION["cart"]);
-if(count($_SESSION["cart"]) == 0) {
-    $stringIds = count($_SESSION["cart"]);
-}
-$sql = "SELECT * FROM productsnew WHERE Id IN ($stringIds)"; //de revenit 
+if(isset($_SESSION["cart"])) {
+    $stringIds = implode(", ", $_SESSION["cart"]);
+    $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id IN ($stringIds)");
+    $stmt->bind_param("s", $_SESSION["cart"]);
+    $stmt->execute();
+    $result = mysqli_stmt_get_result($stmt);
 
-$result = $conn->query($sql);
-
-
-if(!empty($_GET["action"]) && $_GET["action"] == "remove") {  
-    foreach ($_SESSION["cart"] as $key => $value) {
-        if ($value == $_GET["id"]) {
-            unset($_SESSION["cart"][$key]); // de revenit. nu se sterg de la primul click
+    if(!empty($_GET["action"]) && $_GET["action"] == "remove") {  
+        foreach ($_SESSION["cart"] as $key => $value) {
+            if ($value === $_GET["id"]) {
+                unset($_SESSION["cart"][$key]);
+            }
         }
+    }
+
+    if(count($_SESSION["cart"])== 0) {
+        session_unset();
     }
 }
 
@@ -83,7 +85,7 @@ if(isset($_POST["checkout"])) {
 <?php while ($i < count($cartProducts)): ?>
     <div class="product"> 
         <div class="image">
-            <img src="<?= $cartProducts[$i]["Image"] ?>">
+            <img src="<?= "uploads/". $cartProducts[$i]["Image"] ?>">
         </div>
         <div class="productdetails">
             <div class="productTitle"><?= $cartProducts[$i]["Title"] ?></div>

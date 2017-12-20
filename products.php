@@ -10,19 +10,23 @@ if (isset($_POST["delete"])) {
 }
 $result = $conn->query($sql);
 
-//// define(ADMIN,$_SESSION['admin']);
-// if(!$_SESSION["admin"]){ 
-//  header("login.php"); 
-// } else {
-//  header( 'Content-Type: text/html; charset=utf-8' );
-// }
+if(!$_SESSION["admin"]){ 
+    header("location:login.php"); 
+} else {
+    header( 'Content-Type: text/html; charset=utf-8' );
+}
+
+if(isset($_GET["action"]) && $_GET["action"] == "logout") {
+    session_destroy();
+    header("location:login.php");
+}
 
 $conn->close();
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Products</title>
+    <title><?= translate("Products") ?></title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
@@ -31,7 +35,7 @@ $conn->close();
         <div class="product">
             <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="image">
-                    <img src="<?= $row["Image"]; ?>">
+                    <img src="<?= "uploads/". $row["Image"]; ?>">
                 </div>
                 <div class="productdetails">
                     <div class="productTitle"><?= $row["Title"] ?></div>
@@ -46,6 +50,6 @@ $conn->close();
     <?php endwhile; ?>
 <?php endif; ?>
 <a href="product.php"><?= translate("Add") ?></a>
-<a href="login.php"><?= translate("Logout") ?></a>
+<a href="?action=logout" class="logout"><?= translate("Logout") ?></a>
 </body>
 </html>
