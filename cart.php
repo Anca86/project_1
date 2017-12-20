@@ -1,6 +1,5 @@
 <?php
 require_once("common.php");
-
 if(isset($_SESSION["cart"])) {
     $stringIds = implode(", ", $_SESSION["cart"]);
     $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id IN ($stringIds)");
@@ -18,14 +17,12 @@ if(isset($_SESSION["cart"])) {
         session_unset();
     }
 }
-
 $cartProducts = array();
 if($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $cartProducts[] = $row;
     }
 }
-
 $i = 0;
 $nameErr = $contactDetailsErr = "";
 if(isset($_POST["checkout"])) {

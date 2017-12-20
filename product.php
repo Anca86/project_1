@@ -1,6 +1,5 @@
 <?php
 require_once("common.php");
-
 $buttonValue = "";
 if(isset($_POST["edit"])) {
 	$buttonValue = "Update";
@@ -26,7 +25,6 @@ if(isset($_POST["Save"])) {
 	}
 	$stmt->close();
 }
-
 if(isset($_POST["edit"])) {
 	$editId = $_POST["hidden_id"];
     $stmt = $conn->prepare("SELECT * FROM productsnew WHERE Id=?");
@@ -61,7 +59,6 @@ if(isset($_POST["Update"])) {
 	$sql->close();
 	$succes = translate("Product was updated!");
 }
-
 ?>
 <!DOCTYPE html>
 <html>
