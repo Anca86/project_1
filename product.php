@@ -1,6 +1,6 @@
 <?php
 require_once("common.php");
-$buttonValue = "";
+
 if(isset($_POST["edit"])) {
 	$buttonValue = "Update";
 } else {
@@ -12,9 +12,9 @@ if(isset($_POST["Save"])) {
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
 	$uploadOk = 1;
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
-	$title = $_POST["Title"];
-	$description = $_POST["Description"];
-	$price = $_POST["Price"];
+	$title = test_user_input($_POST["Title"]);
+	$description = test_user_input($_POST["Description"]);
+	$price = test_user_input($_POST["Price"]);
 	if(!empty($title) && !empty($description) && !empty($price)) {
 		$stmt = $conn->prepare("INSERT INTO productsnew (Title, Description, Price, Image) VALUES (?, ?, ?, ?)");
 		$stmt->bind_param("ssis", $title, $description, $price, $target_file);
@@ -40,9 +40,9 @@ if(isset($_POST["Update"])) {
 	$uploadOk = 1;
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
 	$editId = $_POST["hidden_id"];
-	$title = $_POST["Title"];
-	$description = $_POST["Description"];
-	$price = $_POST["Price"];
+	$title = test_user_input($_POST["Title"]);
+	$description = test_user_input($_POST["Description"]);
+	$price = test_user_input($_POST["Price"]);
 	if(!empty($title) && !empty($description) && !empty($price)) {
 		$sql = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =? WHERE Id=?");
 		$sql->bind_param("ssii", $title, $description, $price, $editId);
