@@ -1,5 +1,7 @@
 <?php
-require_once("common.php");
+require_once("common.php");	
+$uploadOk = 1;
+$target_dir = "uploads/";
 
 if(isset($_POST["edit"])) {
 	$buttonValue = "Update";
@@ -8,9 +10,7 @@ if(isset($_POST["edit"])) {
 }
 $succes = "";
 if(isset($_POST["Save"])) {
-	$target_dir = "uploads/";
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
-	$uploadOk = 1;
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
 	$title = test_user_input($_POST["Title"]);
 	$description = test_user_input($_POST["Description"]);
@@ -24,6 +24,7 @@ if(isset($_POST["Save"])) {
 		}
 	}
 	$stmt->close();
+	$succes = translate("Product was added!");
 }
 if(isset($_POST["edit"])) {
 	$editId = $_POST["hidden_id"];
@@ -35,9 +36,7 @@ if(isset($_POST["edit"])) {
 	$stmt->close();
 }
 if(isset($_POST["Update"])) {
-	$target_dir = "uploads/";
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
-	$uploadOk = 1;
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
 	$editId = $_POST["hidden_id"];
 	$title = test_user_input($_POST["Title"]);
