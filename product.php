@@ -2,11 +2,10 @@
 require_once("common.php");	
 $uploadOk = 1;
 $target_dir = "uploads/";
-
-if(isset($_POST["edit"])) {
+$title = $description = $price = "";
+$buttonValue = "Save";
+if(isset($_POST["edit"]) || isset($_POST["Update"])) {
 	$buttonValue = "Update";
-} else {
-	$buttonValue = "Save";
 }
 $succes = "";
 if(isset($_POST["Save"])) {
@@ -68,13 +67,13 @@ if(isset($_POST["Update"])) {
 <form method="post" enctype="multipart/form-data" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 	<span><?= $succes ?></span><br />
 	<input type="text" name="Title" required="required" placeholder="Title"
-	value="<?php if (isset($_POST["edit"])) :?><?= translate($row["Title"])?><?php endif; ?>">
+	value="<?= (isset($_POST["edit"])) ? translate($row["Title"]) : $title; ?>" >
 	<br />
 	<input type="text" name="Description" required="required" placeholder="Description"
-	value="<?php if (isset($_POST["edit"])) :?><?= translate($row["Description"])?><?php endif; ?>"><br />
+	value="<?= (isset($_POST["edit"])) ? translate($row["Description"]) : $description; ?>"><br />
 	<input type="text" name="Price" required="required" placeholder="Price"
-	value="<?php if (isset($_POST["edit"])) :?><?= translate($row["Price"])?><?php endif; ?>"><br />
-	<input type="hidden" name="hidden_id" value="<?php if (isset($_POST["edit"])) :?><?= translate($row["Id"])?><?php endif; ?>">
+	value="<?= (isset($_POST["edit"])) ? translate($row["Price"]) : $price; ?>" ><br />
+	<input type="hidden" name="hidden_id" value="<?php if(isset($_POST["edit"])) :?><?= translate($row["Id"])?><?php endif; ?>">
 	<input type="file" name="file" id="file"><br /><br />
 	<a href="products.php">Products</a>
 	<input type="submit" name="<?= $buttonValue ?>" value="<?= $buttonValue?>">
