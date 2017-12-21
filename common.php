@@ -23,20 +23,3 @@ function test_user_input($data) {
   return $data;
 }
 
-// $sql = "CREATE TABLE login_admin (
-// 	id INT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-// 	username VARCHAR(30) NOT NULL,
-// 	password VARCHAR(30) NOT NULL
-// 	)";
-
-// if($conn->query($sql)) {
-// 	echo "succes";
-// } else {
-// 	echo "error" . $conn->error;
-// }
-
-// $sql = "INSERT INTO login_admin (username, password) values ('admin', sha1('admin'))";
-// $conn->query($sql);
-
-// $sql = "UPDATE login_admin set password=sha1('admin') where id=2";
-// $conn->query($sql);

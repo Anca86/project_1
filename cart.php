@@ -46,10 +46,10 @@ if(isset($_POST["checkout"])) {
 	$contactDetails = test_user_input($_POST["contactDetails"]);
     $name = test_user_input($_POST["name"]);
     if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
-        $nameErr = translate("Only letters and white space allowed"); 
+        $nameErr = _NAME_ERR; 
     } 
     if (!filter_var($contactDetails, FILTER_VALIDATE_EMAIL)) {
-        $contactDetailsErr = translate("Email is not valid");
+        $contactDetailsErr = _CONTACT_ERR;
     }
     $comments = test_user_input($_POST["comments"]);
 	$subject = translate("Form submision");

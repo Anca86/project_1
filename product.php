@@ -23,7 +23,7 @@ if(isset($_POST["Save"])) {
 		}
 	}
 	$stmt->close();
-	$succes = translate("Product was added!");
+	$succes = _ADD_PRODUCT;
 }
 if(isset($_POST["edit"])) {
 	$editId = $_POST["hidden_id"];
@@ -55,7 +55,7 @@ if(isset($_POST["Update"])) {
 		$sql->execute();
 	}
 	$sql->close();
-	$succes = translate("Product was updated!");
+	$succes = _UPDATE_PRODUCT;
 }
 ?>
 <!DOCTYPE html>

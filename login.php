@@ -13,7 +13,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 			$_SESSION["admin"] = $inputUser; 
 			header("location:products.php");
 		} else {
-			$msg = translate("Wrong Username or Password. Please retry");
+			$msg = _LOGIN_ERR_MSG;
 		}
 	}
 }
