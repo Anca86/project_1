@@ -2,10 +2,9 @@
 require_once('common.php');
 $sql = "SELECT * from productsnew";
 if (isset($_POST["delete"])) {
-    global $conn;
-    $x = $_POST["hidden_id"];
+    $productId = $_POST["hidden_id"];
     $stmt = $conn->prepare("DELETE from productsnew where Id = ?");
-    $stmt->bind_param("i", $x);
+    $stmt->bind_param("i", $productId);
     $stmt->execute();
 }
 $result = $conn->query($sql);

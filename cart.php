@@ -66,6 +66,7 @@ if(isset($_POST["checkout"])) {
 	   mail($to, $subject, $message, $headers);
     }
 }
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html>

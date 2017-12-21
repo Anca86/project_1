@@ -8,7 +8,7 @@ if(isset($_POST["edit"]) || isset($_POST["Update"])) {
 	$buttonValue = "Update";
 }
 $succes = "";
-//$title = $description = $price = "";
+$title = $description = $price = "";
 if(isset($_POST["Save"])) {
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -58,6 +58,7 @@ if(isset($_POST["Update"])) {
 	$sql->close();
 	$succes = _UPDATE_PRODUCT;
 }
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html>
