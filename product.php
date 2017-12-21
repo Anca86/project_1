@@ -8,6 +8,7 @@ if(isset($_POST["edit"]) || isset($_POST["Update"])) {
 	$buttonValue = "Update";
 }
 $succes = "";
+//$title = $description = $price = "";
 if(isset($_POST["Save"])) {
 	$target_file = idate("U") . basename($_FILES["file"]["name"]);
 	$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -42,19 +43,19 @@ if(isset($_POST["Update"])) {
 	$description = test_user_input($_POST["Description"]);
 	$price = test_user_input($_POST["Price"]);
 	if(!empty($title) && !empty($description) && !empty($price)) {
-		$stmt = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =? WHERE Id=?");
-		$stmt->bind_param("ssii", $title, $description, $price, $editId);
+		$sql = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =? WHERE Id=?");
+		$sql->bind_param("ssii", $title, $description, $price, $editId);
 		if(is_uploaded_file($_FILES["file"]["tmp_name"])) {
-			$stmt = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =?, Image =? WHERE Id=?");
-			$stmt->bind_param("ssisi", $title, $description, $price, $target_file, $editId);
-			if($stmt->execute()) {
-				$fileId = mysqli_stmt_insert_id($stmt);
+			$sql = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =?, Image =? WHERE Id=?");
+			$sql->bind_param("ssisi", $title, $description, $price, $target_file, $editId);
+			if($sql->execute()) {
+				$fileId = mysqli_stmt_insert_id($sql);
 				copy($_FILES["file"]["tmp_name"], __DIR__ . "/uploads/".$target_file);
 			}
 		}
-		$stmt->execute();
+		$sql->execute();
 	}
-	$stmt->close();
+	$sql->close();
 	$succes = _UPDATE_PRODUCT;
 }
 ?>
@@ -74,7 +75,7 @@ if(isset($_POST["Update"])) {
 	<input type="text" name="Price" required="required" placeholder="Price"
 	value="<?= (isset($_POST["edit"])) ? translate($row["Price"]) : $price; ?>" ><br />
 	<input type="hidden" name="hidden_id" 
-	value="<?php if(isset($_POST["edit"]) || isset($_POST["Update"])) :?><?= translate($row["Id"])?><?php endif; ?>">
+	value="<?= (isset($_POST["edit"])) ? translate($row["Id"]) : $editId; ?>">
 	<input type="file" name="file" id="file"><br /><br />
 	<a href="products.php">Products</a>
 	<input type="submit" name="<?= $buttonValue ?>" value="<?= $buttonValue?>">
