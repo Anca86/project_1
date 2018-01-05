@@ -1,7 +1,7 @@
 <?php
 require_once("common.php");
 $cartProducts = array();
-$imgPath = "uploads/";
+
 //code for remove btn
 if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
     if(($key = array_search($_GET["id"], $_SESSION["cart"])) !== false) {
@@ -9,7 +9,7 @@ if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
     }
 }
 //display cart products only
-if(count($_SESSION["cart"])) {
+if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
     $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id IN 
     (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
     $params = array(
@@ -37,17 +37,14 @@ if(isset($_POST["checkout"])) {
     $order = "";
     $totalsum = 0;
     foreach ($cartProducts as $key => $value) {
-        $url = 
-        "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
-         strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'];
         $order .= "<tr>";
         $order .= "<td>" . $cartProducts[$key]['Title'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Description'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Price'] . "</td>"; 
-        $order .= "<td>" . $url . "<td>";
+        $order .= "<td>" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
+        strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'] . "<td>";
         $order .= "</tr>";
         $totalsum += $cartProducts[$key]["Price"];
-        $i++;
     }
     $contactDetails = test_user_input($_POST["contactDetails"]);
     $name = test_user_input($_POST["name"]);
@@ -71,7 +68,7 @@ if(isset($_POST["checkout"])) {
     if(preg_match("/^[a-zA-Z ]*$/",$name) && (filter_var($contactDetails, FILTER_VALIDATE_EMAIL))) {
        mail($to, $subject, $message, $headers);
        $succes = "Your email was sent succesfully!";
-       session_unset($_SESSION["cart"]);
+       session_unset($_SESSION["cart"]); 
     }
 }
 
@@ -87,7 +84,7 @@ $conn->close();
 <?php foreach ($cartProducts as $key => $value) :?>
     <div class="product"> 
         <div class="image">
-            <img src="<?= $imgPath . $cartProducts[$key]["Image"] ?>"> 
+            <img src="uploads/<?= $cartProducts[$key]["Image"] ?>"> 
         </div>
         <div class="productdetails">
             <div class="productTitle"><?= $cartProducts[$key]["Title"] ?></div>

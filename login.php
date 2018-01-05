@@ -1,6 +1,7 @@
 <?php 
 require_once('common.php');
 $msg = "";
+
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $inputUser = test_user_input($_POST["username"]);
     $inputPass = test_user_input($_POST["password"]);
@@ -13,6 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } 
 }
+
 $conn->close();
 ?>
 <!DOCTYPE html>

@@ -28,7 +28,7 @@ if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
     $sql = "SELECT * FROM productsnew";
     $result = $conn->query($sql);
 }
-$imgPath = "uploads/";
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -42,7 +42,7 @@ $conn->close();
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
             <div class="image">
-                <img src="<?= $imgPath. $row["Image"]; ?>">
+                <img src="uploads/<?= $row["Image"]; ?>">
             </div>
             <div class="productdetails">
                 <div class="productTitle"><?= $row["Title"] ?></div>

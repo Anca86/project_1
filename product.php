@@ -1,14 +1,21 @@
 <?php
 require_once("common.php");
+
+if(!$_SESSION["admin"]){ 
+    header("location:login.php"); 
+} else {
+    header( 'Content-Type: text/html; charset=utf-8' );
+}
+
 $uploadOk = 1;
 $target_dir = "uploads/";
-$title = $description = $price = "";
 $buttonValue = "Save";
 if(isset($_POST["edit"]) || isset($_POST["Update"])) {
     $buttonValue = "Update";
 }
-$succes = "";
-$title = $description = $price = "";
+$title = $description = $price = $succes = "";
+
+//add product
 if(isset($_POST["Save"])) {
     $target_file = idate("U") . basename($_FILES["file"]["name"]);
     $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -24,8 +31,10 @@ if(isset($_POST["Save"])) {
         }
     }
     $stmt->close();
-    $succes = _ADD_PRODUCT;
+    $succes = "Product was added!";
 }
+
+//display product for edit
 if(isset($_POST["edit"])) {
     $editId = $_POST["hidden_id"];
     $stmt = $conn->prepare("SELECT * FROM productsnew WHERE Id=?");
@@ -35,6 +44,7 @@ if(isset($_POST["edit"])) {
     $row = $result->fetch_assoc(); 
     $stmt->close();
 }
+//edit product
 if(isset($_POST["Update"])) {
     $target_file = idate("U") . basename($_FILES["file"]["name"]);
     $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -45,6 +55,7 @@ if(isset($_POST["Update"])) {
     if(!empty($title) && !empty($description) && !empty($price)) {
         $sql = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =? WHERE Id=?");
         $sql->bind_param("ssii", $title, $description, $price, $editId);
+        //if image is uploaded
         if(is_uploaded_file($_FILES["file"]["tmp_name"])) {
             $sql = $conn->prepare("UPDATE productsnew set Title =?, Description =?, Price =?, Image =? WHERE Id=?");
             $sql->bind_param("ssisi", $title, $description, $price, $target_file, $editId);
@@ -56,7 +67,7 @@ if(isset($_POST["Update"])) {
         $sql->execute();
     }
     $sql->close();
-    $succes = _UPDATE_PRODUCT;
+    $succes = "Product was updated!";
 }
 $conn->close();
 ?>
@@ -66,7 +77,7 @@ $conn->close();
     <title><?= translate("Product") ?></title>
 </head>
 <body>
-<form method="post" enctype="multipart/form-data" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+<form method="post" enctype="multipart/form-data">
     <span><?= $succes ?></span><br />
     <input type="text" name="Title" required="required" placeholder="Title"
     value="<?= (isset($_POST["edit"])) ? translate($row["Title"]) : $title; ?>" >
@@ -78,7 +89,7 @@ $conn->close();
     <input type="hidden" name="hidden_id" 
     value="<?= (isset($_POST["edit"])) ? translate($row["Id"]) : $editId; ?>">
     <input type="file" name="file" id="file"><br /><br />
-    <a href="products.php">Products</a>
+    <a href="products.php"><?= translate("Products") ?></a>
     <input type="submit" name="<?= $buttonValue ?>" value="<?= $buttonValue?>">
 </form>
 </body>

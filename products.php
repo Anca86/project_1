@@ -1,5 +1,12 @@
 <?php
 require_once('common.php');
+
+if(!$_SESSION["admin"]){ 
+    header("location:login.php"); 
+} else {
+    header( 'Content-Type: text/html; charset=utf-8' );
+}
+
 $sql = "SELECT * from productsnew";
 if (isset($_POST["delete"])) {
     $productId = $_POST["hidden_id"];
@@ -8,15 +15,12 @@ if (isset($_POST["delete"])) {
     $stmt->execute();
 }
 $result = $conn->query($sql);
-if(!$_SESSION["admin"]){ 
-    header("location:login.php"); 
-} else {
-    header( 'Content-Type: text/html; charset=utf-8' );
-}
+
 if(isset($_GET["action"]) && $_GET["action"] == "logout") {
     session_destroy();
     header("location:login.php");
 }
+
 $conn->close();
 ?>
 <!DOCTYPE html>
