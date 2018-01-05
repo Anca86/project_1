@@ -1,14 +1,6 @@
 <?php
 require_once('common.php');
-$sql = "SELECT * FROM productsnew";
-$result = $conn->query($sql);
-if(isset($_SESSION["cart"])) {
-    $stringIds = implode(", ", $_SESSION["cart"]);
-    $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id NOT IN ($stringIds)");
-    $stmt->bind_param("s", $_SESSION["cart"]);
-    $stmt->execute();
-    $result = mysqli_stmt_get_result($stmt);
-} 
+
 if(isset($_POST["add_to_cart"])) {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
@@ -17,6 +9,26 @@ if(isset($_POST["add_to_cart"])) {
         array_push($_SESSION["cart"], $_POST["hidden_id"]);
     }
 }
+
+if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
+    $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id NOT IN 
+    (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
+    $params = array(
+        implode("", array_fill(0, count($_SESSION["cart"]), 'i'))
+    );
+    $params = array_merge($params, $_SESSION["cart"]);
+    $paramsRef = array();
+    foreach ($params as $key => $value) {
+        $paramsRef[] = &$params[$key];
+    }
+    call_user_func_array(array($stmt, 'bind_param'), $paramsRef);
+    $stmt->execute();
+    $result = mysqli_stmt_get_result($stmt);
+} else {
+    $sql = "SELECT * FROM productsnew";
+    $result = $conn->query($sql);
+}
+$imgPath = "uploads/";
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -29,18 +41,18 @@ $conn->close();
 <?php if($result->num_rows > 0): ?>
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
-            <form method="post" action="index.php">
-                <div class="image">
-                    <img src="<?= "uploads/". $row["Image"]; ?>">
-                </div>
-                <div class="productdetails">
-                    <div class="productTitle"><?= $row["Title"] ?></div>
-                    <div class="productDescription"><?= $row["Description"] ?></div>
-                    <div class="productPrice"><?= $row["Price"] ?></div>
+            <div class="image">
+                <img src="<?= $imgPath. $row["Image"]; ?>">
+            </div>
+            <div class="productdetails">
+                <div class="productTitle"><?= $row["Title"] ?></div>
+                <div class="productDescription"><?= $row["Description"] ?></div>
+                <div class="productPrice"><?= $row["Price"] ?></div>
+                <form method="post">
                     <input type="hidden" name="hidden_id" value="<?= $row["Id"] ?>">
                     <input type="submit" name="add_to_cart" value="<?= translate("Add") ?>">
-                </div>
-            </form>
+                </form>
+            </div>
         </div>               
     <?php endwhile; ?>
 <?php endif; ?>

@@ -14,12 +14,12 @@ if ($conn->connect_error) {
 }
 
 function translate($string) {
-	return $string;
+    return $string;
 }
 
 function test_user_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  return $data;
+    $data = trim($data);
+    $data = stripslashes($data);
+    return $data;
 }
 
