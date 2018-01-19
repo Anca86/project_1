@@ -3,23 +3,24 @@ require_once('common.php');
 
 if(!$_SESSION["admin"]){ 
     header("location:login.php"); 
-} else {
-    header( 'Content-Type: text/html; charset=utf-8' );
+    die();
 }
 
-$sql = "SELECT * from productsnew";
-if (isset($_POST["delete"])) {
-    $productId = $_POST["hidden_id"];
+if (isset($_GET["action"]) && $_GET["action"] == "delete") {
+    $productId = $_GET["id"];
     $stmt = $conn->prepare("DELETE from productsnew where Id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
 }
-$result = $conn->query($sql);
 
 if(isset($_GET["action"]) && $_GET["action"] == "logout") {
     session_destroy();
     header("location:login.php");
+    die();
 }
+
+$sql = "SELECT * from productsnew";
+$result = $conn->query($sql);
 
 $conn->close();
 ?>
@@ -33,7 +34,6 @@ $conn->close();
 <?php if($result->num_rows > 0): ?>
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
-            <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="image">
                     <img src="<?= "uploads/". $row["Image"]; ?>">
                 </div>
@@ -41,11 +41,9 @@ $conn->close();
                     <div class="productTitle"><?= $row["Title"] ?></div>
                     <div class="productDescription"><?= $row["Description"] ?></div>
                     <div class="productPrice"><?= $row["Price"] ?></div>
-                    <input type="hidden" name="hidden_id" value="<?= $row["Id"] ?>">
-                    <input type="submit" name="edit" value="<?= translate("Edit") ?>" formaction="product.php">
-                    <input type="submit" name="delete" value="<?= translate("Delete") ?>">
+                    <a href="product.php?action=edit&amp;id=<?= $row["Id"] ?>" class="edit"><?= translate("Edit")?></a>
+                    <a href="products.php?action=delete&amp;id=<?= $row["Id"] ?>" class="delete"><?= translate("Delete")?></a>
                 </div>
-            </form>
         </div>               
     <?php endwhile; ?>
 <?php endif; ?>

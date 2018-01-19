@@ -17,7 +17,7 @@ function translate($string) {
     return $string;
 }
 
-function test_user_input($data) {
+function clean_user_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     return $data;

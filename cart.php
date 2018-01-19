@@ -2,14 +2,15 @@
 require_once("common.php");
 $cartProducts = array();
 
-//code for remove btn
-if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
-    if(($key = array_search($_GET["id"], $_SESSION["cart"])) !== false) {
-        unset($_SESSION["cart"][$key]);
-    }
-}
 //display cart products only
 if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
+    //code for remove btn
+    if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
+        if(($key = array_search($_GET["id"], $_SESSION["cart"])) !== false) {
+            unset($_SESSION["cart"][$key]);
+        }
+    }
+
     $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id IN 
     (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
     $params = array(
@@ -41,15 +42,15 @@ if(isset($_POST["checkout"])) {
         $order .= "<td>" . $cartProducts[$key]['Title'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Description'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Price'] . "</td>"; 
-        $order .= "<td>" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
-        strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'] . "<td>";
+        $order .= "<td> <img src=\"" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
+        strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'] . "\" /><td>";
         $order .= "</tr>";
         $totalsum += $cartProducts[$key]["Price"];
     }
-    $contactDetails = test_user_input($_POST["contactDetails"]);
-    $name = test_user_input($_POST["name"]);
-    $comments = test_user_input($_POST["comments"]);
-    $subject = "Form submision";
+    $contactDetails = clean_user_input($_POST["contactDetails"]);
+    $name = clean_user_input($_POST["name"]);
+    $comments = clean_user_input($_POST["comments"]);
+    $subject = translate("Form submision");
     $headers = "From: " . $contactDetails . "\r\n";
     $headers .= "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -59,15 +60,21 @@ if(isset($_POST["checkout"])) {
     $message .= "<tr><td colspan='2'>" . translate('Total') . "</td><td colspan='2'>" . $totalsum. "</td></tr>";
     $message .= "</table>";
     $message .= "</html></body>";
-    if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
-        $nameErr = "Only letters and white space allowed";
-    } 
-    if (!filter_var($contactDetails, FILTER_VALIDATE_EMAIL)) {
-        $contactDetailsErr = "Email is not valid";
+
+    $userName = preg_match("/^[a-zA-Z ]*$/",$name);
+    $userMail = filter_var($contactDetails, FILTER_VALIDATE_EMAIL);
+
+    if(!$userName) {
+        $nameErr = translate("Only letters and white space allowed");
     }
-    if(preg_match("/^[a-zA-Z ]*$/",$name) && (filter_var($contactDetails, FILTER_VALIDATE_EMAIL))) {
-       mail($to, $subject, $message, $headers);
-       $succes = "Your email was sent succesfully!";
+
+    if(!$userMail) {
+        $contactDetailsErr = translate("Email is not valid");
+    }
+
+    if($userName && $userMail) {
+        mail(_EMAIL, $subject, $message, $headers);
+       $succes = translate("Your email was sent succesfully!");
        session_unset($_SESSION["cart"]); 
     }
 }

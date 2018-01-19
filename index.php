@@ -1,12 +1,12 @@
 <?php
 require_once('common.php');
 
-if(isset($_POST["add_to_cart"])) {
+if(isset($_GET["action"]) && $_GET["action"] == "add") {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
     } 
-    if(!in_array($_POST["hidden_id"], $_SESSION["cart"])) {
-        array_push($_SESSION["cart"], $_POST["hidden_id"]);
+    if(!in_array($_GET["action"], $_SESSION["cart"])) {
+        array_push($_SESSION["cart"], $_GET["id"]);
     }
 }
 
@@ -48,10 +48,7 @@ $conn->close();
                 <div class="productTitle"><?= $row["Title"] ?></div>
                 <div class="productDescription"><?= $row["Description"] ?></div>
                 <div class="productPrice"><?= $row["Price"] ?></div>
-                <form method="post">
-                    <input type="hidden" name="hidden_id" value="<?= $row["Id"] ?>">
-                    <input type="submit" name="add_to_cart" value="<?= translate("Add") ?>">
-                </form>
+                <a href="index.php?action=add&amp;id=<?= $row["Id"] ?>" class="add"><?= translate("Add") ?></a>
             </div>
         </div>               
     <?php endwhile; ?>
