@@ -42,7 +42,7 @@ if(isset($_POST["checkout"])) {
         $order .= "<td>" . $cartProducts[$key]['Title'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Description'] . "</td>";
         $order .= "<td>" . $cartProducts[$key]['Price'] . "</td>"; 
-        $order .= "<td> <img src=\"" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
+        $order .= "<td><img src=\"" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
         strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'] . "\" /><td>";
         $order .= "</tr>";
         $totalsum += $cartProducts[$key]["Price"];

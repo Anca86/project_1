@@ -11,7 +11,7 @@ $target_dir = translate("uploads/");
 $title = $description = $price = $uploadMsg = "";
 // if $_GET["action"] is equal to edit
 $isActionEdit = isset($_GET["action"]) && $_GET["action"] == "edit"; 
-// if we have productId from $_GET["action"]
+// if we have product Id from $_GET["action"]
 $ifProductId = isset($_GET["action"]) && $_GET["id"];
 
 if(isset($_POST["save"]) || isset($_POST["update"])) {
