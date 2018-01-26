@@ -5,29 +5,34 @@ $cartProducts = array();
 //display cart products only
 if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
     //code for remove btn
-    if(!empty($_GET["action"]) && $_GET["action"] == "remove") {
+    if(isset($_GET["id"])) {
         if(($key = array_search($_GET["id"], $_SESSION["cart"])) !== false) {
             unset($_SESSION["cart"][$key]);
+            if(!count($_SESSION["cart"])) {
+               session_unset($_SESSION["cart"]);
+            }
+        } 
+    }
+
+    if(isset($_SESSION["cart"])) {
+        $stmt =$conn->prepare("SELECT * FROM products WHERE id IN 
+        (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
+        $params = array(
+            implode("", array_fill(0, count($_SESSION["cart"]), 'i'))
+        );
+        $params = array_merge($params, $_SESSION["cart"]);
+        $paramsRef = array();
+        foreach ($params as $key => $value) {
+            $paramsRef[] = &$params[$key];
         }
-    }
+        call_user_func_array(array($stmt, 'bind_param'), $paramsRef);
+        $stmt->execute();
+        $result = mysqli_stmt_get_result($stmt);
 
-    $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id IN 
-    (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
-    $params = array(
-        implode("", array_fill(0, count($_SESSION["cart"]), 'i'))
-    );
-    $params = array_merge($params, $_SESSION["cart"]);
-    $paramsRef = array();
-    foreach ($params as $key => $value) {
-        $paramsRef[] = &$params[$key];
-    }
-    call_user_func_array(array($stmt, 'bind_param'), $paramsRef);
-    $stmt->execute();
-    $result = mysqli_stmt_get_result($stmt);
-
-    if($result->num_rows > 0) {
-        while($row = $result->fetch_assoc()) {
-            $cartProducts[] = $row;
+        if($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $cartProducts[] = $row;
+            }
         }
     }
 }
@@ -39,13 +44,13 @@ if(isset($_POST["checkout"])) {
     $totalsum = 0;
     foreach ($cartProducts as $key => $value) {
         $order .= "<tr>";
-        $order .= "<td>" . $cartProducts[$key]['Title'] . "</td>";
-        $order .= "<td>" . $cartProducts[$key]['Description'] . "</td>";
-        $order .= "<td>" . $cartProducts[$key]['Price'] . "</td>"; 
+        $order .= "<td>" . $value['title'] . "</td>";
+        $order .= "<td>" . $value['description'] . "</td>";
+        $order .= "<td>" . $value['price'] . "</td>"; 
         $order .= "<td><img src=\"" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
-        strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $cartProducts[$key]['Image'] . "\" /><td>";
+        strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $value['image'] . "\" /><td>";
         $order .= "</tr>";
-        $totalsum += $cartProducts[$key]["Price"];
+        $totalsum += $value["price"];
     }
     $contactDetails = clean_user_input($_POST["contactDetails"]);
     $name = clean_user_input($_POST["name"]);
@@ -91,13 +96,13 @@ $conn->close();
 <?php foreach ($cartProducts as $key => $value) :?>
     <div class="product"> 
         <div class="image">
-            <img src="uploads/<?= $cartProducts[$key]["Image"] ?>"> 
+            <img src="uploads/<?= $value["image"] ?>"> 
         </div>
         <div class="productdetails">
-            <div class="productTitle"><?= $cartProducts[$key]["Title"] ?></div>
-            <div class="productDescription"><?= $cartProducts[$key]["Description"] ?></div>
-            <div class="productPrice"><?= $cartProducts[$key]["Price"] ?></div>
-            <a href="cart.php?action=remove&amp;id=<?= $cartProducts[$key]["Id"] ?>" class="remove"><?= translate("Remove") ?></a>
+            <div class="productTitle"><?= $value["title"] ?></div>
+            <div class="productDescription"><?= $value["description"] ?></div>
+            <div class="productPrice"><?= $value["price"] ?></div>
+            <a href="cart.php?action=remove&amp;id=<?= $value["id"] ?>" class="remove"><?= translate("Remove") ?></a>
         </div>
     </div>
 <?php endforeach; ?>
@@ -106,11 +111,11 @@ $conn->close();
 </div>
 
 <form method="post">
-    <input type="text" name="name" placeholder="Name" required="required">
+    <input type="text" name="name" placeholder="<?= translate("Name") ?>" required="required">
     <span><?= $nameErr ?></span><br />
-    <input type="text" name="contactDetails" placeholder="Contact details" required="required">
+    <input type="text" name="contactDetails" placeholder="<?= translate("Contact detailes") ?>" required="required">
     <span><?= $contactDetailsErr ?></span><br />
-    <input type="text" name="comments" placeholder="Comments"><br />
+    <input type="text" name="comments" placeholder="<?= translate("Comments") ?>"><br />
     <input type="submit" name="checkout" value="Checkout">
     <span><?= $succes ?></span><br />
 </form>

@@ -6,9 +6,9 @@ if(!$_SESSION["admin"]){
     die();
 }
 
-if (isset($_GET["action"]) && $_GET["action"] == "delete") {
+if (isset($_GET["id"])) {
     $productId = $_GET["id"];
-    $stmt = $conn->prepare("DELETE from productsnew where Id = ?");
+    $stmt = $conn->prepare("DELETE from products where id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
 }
@@ -19,9 +19,8 @@ if(isset($_GET["action"]) && $_GET["action"] == "logout") {
     die();
 }
 
-$sql = "SELECT * from productsnew";
+$sql = "SELECT * from products";
 $result = $conn->query($sql);
-
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -35,14 +34,14 @@ $conn->close();
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
                 <div class="image">
-                    <img src="<?= "uploads/". $row["Image"]; ?>">
+                    <img src="<?= "uploads/". $row["image"]; ?>">
                 </div>
                 <div class="productdetails">
-                    <div class="productTitle"><?= $row["Title"] ?></div>
-                    <div class="productDescription"><?= $row["Description"] ?></div>
-                    <div class="productPrice"><?= $row["Price"] ?></div>
-                    <a href="product.php?action=edit&amp;id=<?= $row["Id"] ?>" class="edit"><?= translate("Edit")?></a>
-                    <a href="products.php?action=delete&amp;id=<?= $row["Id"] ?>" class="delete"><?= translate("Delete")?></a>
+                    <div class="productTitle"><?= $row["title"] ?></div>
+                    <div class="productDescription"><?= $row["description"] ?></div>
+                    <div class="productPrice"><?= $row["price"] ?></div>
+                    <a href="product.php?action=edit&amp;id=<?= $row["id"] ?>" class="edit"><?= translate("Edit")?></a>
+                    <a href="products.php?action=delete&amp;id=<?= $row["id"] ?>" class="delete"><?= translate("Delete")?></a>
                 </div>
         </div>               
     <?php endwhile; ?>

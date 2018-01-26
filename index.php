@@ -1,17 +1,17 @@
 <?php
 require_once('common.php');
 
-if(isset($_GET["action"]) && $_GET["action"] == "add") {
+if(isset($_GET["id"])) {
     if(!isset($_SESSION["cart"])) {
         $_SESSION["cart"] = array();
     } 
-    if(!in_array($_GET["action"], $_SESSION["cart"])) {
+    if(!in_array($_GET["id"], $_SESSION["cart"])) {
         array_push($_SESSION["cart"], $_GET["id"]);
     }
 }
 
 if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
-    $stmt =$conn->prepare("SELECT * FROM productsnew WHERE Id NOT IN 
+    $stmt =$conn->prepare("SELECT * FROM products WHERE id NOT IN 
     (" . implode(", ", array_fill(0, count($_SESSION["cart"]), '?')) . ")");
     $params = array(
         implode("", array_fill(0, count($_SESSION["cart"]), 'i'))
@@ -25,7 +25,7 @@ if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
     $stmt->execute();
     $result = mysqli_stmt_get_result($stmt);
 } else {
-    $sql = "SELECT * FROM productsnew";
+    $sql = "SELECT * FROM products";
     $result = $conn->query($sql);
 }
 
@@ -42,13 +42,13 @@ $conn->close();
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
             <div class="image">
-                <img src="uploads/<?= $row["Image"]; ?>">
+                <img src="uploads/<?= $row["image"]; ?>">
             </div>
             <div class="productdetails">
-                <div class="productTitle"><?= $row["Title"] ?></div>
-                <div class="productDescription"><?= $row["Description"] ?></div>
-                <div class="productPrice"><?= $row["Price"] ?></div>
-                <a href="index.php?action=add&amp;id=<?= $row["Id"] ?>" class="add"><?= translate("Add") ?></a>
+                <div class="productTitle"><?= $row["title"] ?></div>
+                <div class="productDescription"><?= $row["description"] ?></div>
+                <div class="productPrice"><?= $row["price"] ?></div>
+                <a href="index.php?action=add&amp;id=<?= $row["id"] ?>" class="add"><?= translate("Add") ?></a>
             </div>
         </div>               
     <?php endwhile; ?>

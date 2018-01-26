@@ -26,8 +26,8 @@ $conn->close();
 <body>
 <form method="post">
     <span><?= $msg ?></span><br />
-    <input type="Username" name="username" placeholder="Username" autocomplete="off">
-    <input type="Password" name="password" placeholder="Password" autocomplete="off"><br />
+    <input type="text" name="username" placeholder="<?= translate("Username") ?>" autocomplete="off">
+    <input type="password" name="password" placeholder="<?= translate("Password") ?>" autocomplete="off"><br />
     <input type="submit" name="submit" value="<?= translate("Submit") ?>">
 </form>
 </body>
