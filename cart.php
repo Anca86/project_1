@@ -9,7 +9,7 @@ if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
         if(($key = array_search($_GET["id"], $_SESSION["cart"])) !== false) {
             unset($_SESSION["cart"][$key]);
             if(!count($_SESSION["cart"])) {
-               session_unset($_SESSION["cart"]);
+                unset($_SESSION["cart"]);
             }
         } 
     }
@@ -38,7 +38,13 @@ if(isset($_SESSION["cart"]) && count($_SESSION["cart"])) {
 }
 
 $i = 0;
-$nameErr = $contactDetailsErr = $succes = "";
+$nameErr = $contactDetailsErr = $succes = $sendErr = "";
+$protocol = "http";
+
+if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+    $protocol = "https";
+}
+
 if(isset($_POST["checkout"])) {
     $order = "";
     $totalsum = 0;
@@ -47,7 +53,7 @@ if(isset($_POST["checkout"])) {
         $order .= "<td>" . $value['title'] . "</td>";
         $order .= "<td>" . $value['description'] . "</td>";
         $order .= "<td>" . $value['price'] . "</td>"; 
-        $order .= "<td><img src=\"" . "http://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
+        $order .= "<td><img src=\"" . $protocol . "://".$_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0,
         strrpos($_SERVER['SCRIPT_NAME'], "/")+1) ."uploads/" . $value['image'] . "\" /><td>";
         $order .= "</tr>";
         $totalsum += $value["price"];
@@ -56,7 +62,7 @@ if(isset($_POST["checkout"])) {
     $name = clean_user_input($_POST["name"]);
     $comments = clean_user_input($_POST["comments"]);
     $subject = translate("Form submision");
-    $headers = "From: " . $contactDetails . "\r\n";
+    $headers = "From: " . _EMAIL . "\r\n";
     $headers .= "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $message = "<html><body>";
@@ -78,9 +84,12 @@ if(isset($_POST["checkout"])) {
     }
 
     if($userName && $userMail) {
-        mail(_EMAIL, $subject, $message, $headers);
-       $succes = translate("Your email was sent succesfully!");
-       session_unset($_SESSION["cart"]); 
+        if(mail(_EMAIL, $subject, $message, $headers)) {
+            $succes = translate("Your email was sent succesfully!");
+            unset($_SESSION["cart"]); 
+        } else {
+            $sendErr = "Something went wrong. Please try again.";
+        }
     }
 }
 
@@ -102,7 +111,7 @@ $conn->close();
             <div class="productTitle"><?= $value["title"] ?></div>
             <div class="productDescription"><?= $value["description"] ?></div>
             <div class="productPrice"><?= $value["price"] ?></div>
-            <a href="cart.php?action=remove&amp;id=<?= $value["id"] ?>" class="remove"><?= translate("Remove") ?></a>
+            <a href="cart.php?id=<?= $value["id"] ?>" class="remove"><?= translate("Remove") ?></a>
         </div>
     </div>
 <?php endforeach; ?>
@@ -118,6 +127,7 @@ $conn->close();
     <input type="text" name="comments" placeholder="<?= translate("Comments") ?>"><br />
     <input type="submit" name="checkout" value="Checkout">
     <span><?= $succes ?></span><br />
+    <span><?= $sendErr ?></span><br />
 </form>
 </body>
 </html>

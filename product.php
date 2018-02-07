@@ -7,7 +7,7 @@ if(!$_SESSION["admin"]){
 }
 
 $uploadOk = 1;
-$title = $description = $price = $uploadMsg = $errMsg = "";
+$title = $description = $price = $uploadMsg = $errMsg = $titleErr = $descriptionErr = $priceErr = $imageErr = "";
 $isId = isset($_GET["id"]);
 $isSave = isset($_POST["save"]);
 
@@ -19,11 +19,23 @@ if($isSave) {
     $stmt = "";
     //if add
     if(!$isId) {
-        if(!empty($title) && !empty($description) && !empty($price) && getimagesize($_FILES["file"]["tmp_name"])) {
-            $stmt = $conn->prepare("INSERT INTO products (title, description, price, image) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssis", $title, $description, $price, $target_file);
-            $uploadMsg = translate("Product was added!");
-        } 
+        if(!empty($title) && !empty($description) && !empty($price) && is_uploaded_file($_FILES["file"]["tmp_name"])) {
+            if(getimagesize($_FILES["file"]["tmp_name"])) {
+                $stmt = $conn->prepare("INSERT INTO products (title, description, price, image) VALUES (?, ?, ?, ?)");
+                $stmt->bind_param("ssis", $title, $description, $price, $target_file);
+                $uploadMsg = translate("Product was added!");
+            } else {
+                $imageErr = translate("File uploaded is not an image!");
+            }
+        } elseif (empty($title)) {
+            $titleErr = "Title is empty. No spaces allowed.";
+        } elseif (empty($description)) {
+            $descriptionErr = "Description is empty. No spaces allowed.";
+        } elseif (empty($price)) {
+            $priceErr = "Price is empty. No spaces allowed.";
+        } elseif(!is_uploaded_file($_FILES["file"]["tmp_name"])) {
+            $imageErr = "Image must be uploaded!";
+        }
     } else { // if edit
         $editId = $_GET["id"];
         if(!empty($title) && !empty($description) && !empty($price)) {
@@ -34,7 +46,7 @@ if($isSave) {
                     $stmt->bind_param("ssisi", $title, $description, $price, $target_file, $editId);
                     $uploadMsg = translate("Product was updated!");
                 } else {
-                    $uploadMsg = translate("File uploaded is not an image!");
+                    $imageErr = translate("File uploaded is not an image!");
                 }
             } else {
                 $stmt = $conn->prepare("UPDATE products set title =?, description =?, price =? WHERE id=?");
@@ -44,16 +56,17 @@ if($isSave) {
         }
     }
     if($stmt && $stmt->execute()) {
-        move_uploaded_file($_FILES["file"]["tmp_name"], __DIR__ . "/uploads/".$target_file);
+        if(is_uploaded_file($_FILES["file"]["tmp_name"]) && getimagesize($_FILES["file"]["tmp_name"])) {
+            move_uploaded_file($_FILES["file"]["tmp_name"], __DIR__ . "/uploads/".$target_file);
+        }
         $stmt->close();
-    } 
-    else {
+    } else {
         $errMsg = translate("Something went wrong! Please try again!");
     }
 }
 
 //display product for edit
-if(isset($_GET["action"]) && $_GET["action"] == "edit" && !$isSave) {
+if($isId && !$isSave) {
     $editId = $_GET["id"];
     $stmt = $conn->prepare("SELECT * FROM products WHERE id=?");
     $stmt->bind_param("i", $editId);
@@ -78,16 +91,15 @@ $conn->close();
     <span><?= $uploadMsg ?></span><br />
     <span><?= $errMsg ?></span><br />
     <input type="text" name="title" required="required" placeholder="<?= translate("Title") ?>"
-    value="<?= $title; ?>" >
-    <br />
+    value="<?= $title; ?>" >  <span><?= $titleErr ?></span><br />
     <input type="text" name="description" required="required" placeholder="<?= translate("Description") ?>"
-    value="<?= $description; ?>"><br />
-    <input type="text" name="price" required="required" placeholder="<?= translate("Price") ?>"
-    value="<?= $price; ?>" ><br />
-    <input type="file" name="file" id="file"><br /><br />
+    value="<?= $description; ?>"> <span><?= $descriptionErr ?></span><br />
+    <input type="number" name="price" required="required" placeholder="<?= translate("Price") ?>"
+    value="<?= $price; ?>" ><br /> <span><?= $priceErr ?></span>
+    <input type="file" name="file" id="file"><span><?= $imageErr ?></span><br /><br /> 
     <a href="products.php"><?= translate("Products") ?></a>
     <input type="submit" name="save" 
-    value="<?= $isId ? "Update": "Save"; ?>">
+    value="<?= $isId ? translate("Update"): translate("Save"); ?>">
 </form>
 </body>
 </html>

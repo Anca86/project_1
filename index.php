@@ -48,7 +48,7 @@ $conn->close();
                 <div class="productTitle"><?= $row["title"] ?></div>
                 <div class="productDescription"><?= $row["description"] ?></div>
                 <div class="productPrice"><?= $row["price"] ?></div>
-                <a href="index.php?action=add&amp;id=<?= $row["id"] ?>" class="add"><?= translate("Add") ?></a>
+                <a href="index.php?id=<?= $row["id"] ?>" class="add"><?= translate("Add") ?></a>
             </div>
         </div>               
     <?php endwhile; ?>

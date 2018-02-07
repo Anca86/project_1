@@ -34,14 +34,14 @@ $conn->close();
     <?php while($row = $result->fetch_assoc()): ?>
         <div class="product">
                 <div class="image">
-                    <img src="<?= "uploads/". $row["image"]; ?>">
+                    <img src="uploads/<?= $row["image"]; ?>">
                 </div>
                 <div class="productdetails">
                     <div class="productTitle"><?= $row["title"] ?></div>
                     <div class="productDescription"><?= $row["description"] ?></div>
                     <div class="productPrice"><?= $row["price"] ?></div>
-                    <a href="product.php?action=edit&amp;id=<?= $row["id"] ?>" class="edit"><?= translate("Edit")?></a>
-                    <a href="products.php?action=delete&amp;id=<?= $row["id"] ?>" class="delete"><?= translate("Delete")?></a>
+                    <a href="product.php?id=<?= $row["id"] ?>" class="edit"><?= translate("Edit")?></a>
+                    <a href="products.php?id=<?= $row["id"] ?>" class="delete"><?= translate("Delete")?></a>
                 </div>
         </div>               
     <?php endwhile; ?>
